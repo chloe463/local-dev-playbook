@@ -5,7 +5,7 @@
     - essentials
     - httpd
     - redis
-#     - mysql
+    - mysql
 #     - rbenv
 #     - phpenv
 #     - plenv

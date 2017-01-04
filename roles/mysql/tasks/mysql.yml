@@ -1,0 +1,10 @@
+---
+- name: (mysql) Install MySQL 5.6
+  yum: name={{ item }} state=present enablerepo=mysql56-community
+  with_items:
+    - mysql-community-client
+    - mysql-community-server
+    - mysql-community-devel
+    - mysql-community-common
+    - mysql-community-libs
+  notify: start mysql
