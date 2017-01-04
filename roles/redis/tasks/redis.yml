@@ -1,0 +1,33 @@
+---
+- name: (redis) check redis source file exsistence
+  command: ls /usr/local/src/redis-{{redis_version}}
+  ignore_errors: true
+  register: redis_source_exists
+
+- name: (redis) copy redis source file and unarchive
+  unarchive: src=redis-{{redis_version}}.tar.gz dest=/usr/local/src/
+  when: redis_source_exists|failed
+
+- name: (redis) make directory(/etc/redis) for redis config files
+  file: path=/etc/redis force=true state=directory
+
+- name: (redis) make directory(/var/redis) for redis data files
+  file: path=/var/redis force=true state=directory
+
+- name: (redis) make directory(/var/redis/{{redis_port}}) for redis data files
+  file: path=/var/redis/{{redis_port}} force=true state=directory
+
+- name: (redis) make directory(/var/log/redis) for redis log files
+  file: path=/var/log/redis force=true state=directory
+
+- name: (redis) copy redis_init_script
+  template: src=redis_init_script.j2 dest=/etc/init.d/redis_{{redis_port}}
+
+- name: (redis) copy redis config file
+  template: src=redis.conf.j2 dest=/etc/redis/{{redis_port}}.conf
+
+- name: (redis) make redis
+  shell: chdir=/usr/local/src/redis-{{redis_version}} make
+
+- name: (redis) install redis
+  shell: chdir=/usr/local/src/redis-{{redis_version}} make install
