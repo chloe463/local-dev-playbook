@@ -23,4 +23,5 @@
     - wget
     - unzip
     - bind-utils
+    - readline-devel
 

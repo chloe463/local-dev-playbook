@@ -6,9 +6,8 @@
     - httpd
     - redis
     - mysql
-#     - rbenv
+    - rbenv
 #     - phpenv
 #     - plenv
-#     - rbenv
 #     - nodejs
 

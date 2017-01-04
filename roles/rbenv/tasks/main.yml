@@ -1,0 +1,54 @@
+---
+- name: Check if rbenv is cloned
+  shell: ls {{ RBENV_ROOT }}
+  register: rbenv_is_cloned
+  ignore_errors: true
+  become: no
+
+- name: Clone rbenv/rbenv
+  git: repo=https://github.com/rbenv/rbenv.git dest={{ RBENV_ROOT }}
+  when: rbenv_is_cloned|failed
+  become: no
+
+- name: Clone rbenv/ruby-build
+  git: repo=https://github.com/rbenv/ruby-build.git dest={{ RBENV_ROOT }}/plugins/ruby-build
+  when: rbenv_is_cloned|failed
+  become: no
+
+- name: Install ruby-build
+  shell: chdir={{ RBENV_ROOT }}/plugins/ruby-build ./install.sh
+  when: rbenv_is_cloned|failed
+  become: no
+
+  #- name: Check if PATH is extended
+  #  shell: grep RBENV_ROOT /root/.bashrc
+  #  register: is_path_extended
+  #  ignore_errors: true
+  #  become: no
+
+- name: Copy rbenv.sh to /etc/profile.d/rbenv.sh
+  copy: src=rbenv.sh dest=/etc/profile.d/rbenv.sh
+  become: no
+
+  # - name: Set PATH
+  #   shell: cat /etc/profile.d/rbenv.sh >> /root/.bashrc
+
+  # - name: Install ruby
+  #   script: install-rbenv.sh
+  #   become: no
+
+- name: Install ruby via rbenv
+  command: "{{ RBENV_ROOT }}/bin/rbenv install 2.3.1"
+  become: no
+
+- name: rbenv rehash
+  command: "{{ RBENV_ROOT }}/bin/rbenv rehash"
+  become: no
+
+- name: Set ruby 2.3.1 as global ruby version
+  command: "{{ RBENV_ROOT }}/bin/rbenv global 2.3.1"
+  become: no
+
+- name: rbenv rehash
+  command: "{{ RBENV_ROOT }}/bin/rbenv rehash"
+  become: no
