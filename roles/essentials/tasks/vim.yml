@@ -1,0 +1,18 @@
+---
+- name: (vim) Check if vim source is cloned
+  command: ls -la /usr/local/src/vim
+  ignore_errors: True
+  register: vim_source_cloned
+
+- name: (vim) Clone vim repository
+  git: repo=https://github.com/vim/vim.git dest=/usr/local/src/vim
+
+- name: (vim) confgure
+  command: chdir=/usr/local/src/vim ./configure --prefix=/usr
+
+- name: (vim) make
+  command: chdir=/usr/local/src/vim make prefix=/usr all
+
+- name: (vim) make install
+  command: chdir=/usr/local/src/vim make prefix=/usr install
+

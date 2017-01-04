@@ -1,0 +1,32 @@
+---
+- name: (git) check git source file exsistence
+  command: ls /usr/local/src/git-{{git_version}}
+  ignore_errors: True
+  register: git_source_exists
+
+- name: (git) Copy git source file and unarchive
+  unarchive: src=git-{{git_version}}.tar.gz dest=/usr/local/src/
+  when: git_source_exists|failed
+
+- name: (git) Check git installed
+  command: which git
+  ignore_errors: True
+  register: git_is_installed
+  sudo: no
+
+- name: (git) configure
+  command: chdir=/usr/local/src/git-{{git_version}} ./configure --prefix=/usr
+  when: git_is_installed|failed
+
+- name: (git) make
+  command: chdir=/usr/local/src/git-{{git_version}} make prefix=/usr all
+  when: git_is_installed
+
+- name: (git) make install
+  command: chdir=/usr/local/src/git-{{git_version}} make prefix=/usr install
+
+- name: (git) Copy git-prompt.sh to home directory
+  shell: cp /usr/local/src/git-{{git_version}}/contrib/completion/git-prompt.sh /home/vagrant/.git-prompt.sh
+
+- name: (git) Copy git-completion.bash to home directory
+  shell: cp /usr/local/src/git-{{git_version}}/contrib/completion/git-completion.bash /home/vagrant/.git-completion.bash

@@ -1,0 +1,14 @@
+---
+- hosts: local
+  sudo: yes
+  roles:
+     - essentials
+#     - httpd
+#     - redis
+#     - mysql
+#     - rbenv
+#     - phpenv
+#     - plenv
+#     - rbenv
+#     - nodejs
+

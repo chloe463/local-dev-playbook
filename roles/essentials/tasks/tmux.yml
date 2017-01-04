@@ -1,0 +1,63 @@
+---
+- name: (tmux) Uninstall old libevent
+  yum: name={{ item }} state=absent
+  with_items:
+    - libevent
+    - libevent-devel
+    - libevent-headers
+- name: (tmux) Install ncurses
+  yum: name={{ item }} state=latest
+  with_items:
+    - ncurses
+    - ncurses-devel
+
+- name: (tmux) Check libevent source file existence
+  command: ls /usr/local/src/libevent-{{libevent_version}}-stable
+  ignore_errors: True
+  register: libevent_source_exists
+
+- name: (tmux) Copy libevent source and unarchive
+  unarchive: src=libevent-{{libevent_version}}-stable.tar.gz dest=/usr/local/src/
+  when: libevent_source_exists|failed
+
+- name: (tmux) configure libevent
+  command: chdir=/usr/local/src/libevent-{{libevent_version}}-stable ./configure --prefix=/usr
+
+- name: (tmux) make
+  command: chdir=/usr/local/src/libevent-{{libevent_version}}-stable make prefix=/usr all
+
+- name: (tmux) make install
+  command: chdir=/usr/local/src/libevent-{{libevent_version}}-stable make prefix=/usr install
+
+- name: (tmux) Append conf
+  shell: echo "/usr/local/lib" > /etc/ld.so.conf.d/libevent.conf
+
+- name: (tmux) notify
+  shell: ldconfig
+
+- name: (tmux) check tmux source file exsistence
+  command: ls /usr/local/src/tmux-{{tmux_version}}
+  ignore_errors: True
+  register: tmux_source_exists
+
+- name: (tmux) Copy tmux source file and unarchive
+  unarchive: src=tmux-{{tmux_version}}.tar.gz dest=/usr/local/src/
+  when: tmux_source_exists|failed
+
+- name: (tmux) Check tmux installed
+  command: which tmux
+  ignore_errors: True
+  register: tmux_is_installed
+  sudo: no
+
+- name: (tmux) configure
+  command: chdir=/usr/local/src/tmux-{{tmux_version}} ./configure --prefix=/usr
+  when: tmux_is_installed|failed
+
+- name: (tmux) make
+  command: chdir=/usr/local/src/tmux-{{tmux_version}} make prefix=/usr all
+  when: tmux_is_installed
+
+- name: (tmux) make install
+  command: chdir=/usr/local/src/tmux-{{tmux_version}} make prefix=/usr install
+

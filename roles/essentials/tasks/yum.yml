@@ -1,0 +1,16 @@
+---
+- name: (yum) Add epel repository
+  ignore_errors: true
+  action: shell rpm -Uvh http://ftp-srv2.kddilabs.jp/Linux/distributions/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm
+- name: (yum) Disable epel repository by default
+  copy: src=epel.repo dest=/etc/yum.repos.d/epel.repo owner=root group=root
+# - name: Add rpmforge repository
+#   ignore_errors: true
+#   action: shell rpm -Uvh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+# - name: Disable rpmforge repository by default
+#   copy: src=rpmforge.repo dest=/etc/yum.repos.d owner=root group=root
+- name: (yum) Add mysql-community repository
+  ignore_errors: true
+  action: shell rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+- name: (yum) Disable mysql-community repository by default
+  copy: src=mysql-community.repo dest=/etc/yum.repos.d owner=root group=root

@@ -1,0 +1,47 @@
+---
+- name: (zsh) check zsh source file exsistence
+  command: ls /usr/local/src/zsh-{{zsh_version}}
+  ignore_errors: True
+  register: zsh_source_exists
+
+- name: (zsh) Copy zsh source file and unarchive
+  unarchive: src=zsh-{{zsh_version}}.tar.gz dest=/usr/local/src/
+  when: zsh_source_exists|failed
+
+- name: (zsh) Check zsh installed
+  command: which zsh
+  ignore_errors: True
+  register: zsh_is_installed
+  sudo: no
+
+- name: (zsh) configure
+  command: chdir=/usr/local/src/zsh-{{zsh_version}} ./configure --prefix=/usr
+  when: zsh_is_installed|failed
+
+- name: (zsh) make
+  command: chdir=/usr/local/src/zsh-{{zsh_version}} make prefix=/usr all
+  when: zsh_is_installed
+
+- name: (zsh) make install
+  command: chdir=/usr/local/src/zsh-{{zsh_version}} make prefix=/usr install
+
+- name: (zsh) Append zsh path to /etc/shells
+  shell: echo '/usr/bin/zsh' >> /etc/shells
+  when: zsh_is_installed
+
+#TODO: install prezto
+- name: (prezto) Check if .prezto is cloned
+  shell: ls -la $HOME/.zprezto
+  sudo: no
+  ignore_errors: True
+  register: prezto_exists
+
+- name: (prezto) install prezto
+  shell: /usr/bin/git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+  sudo: no
+  when: prezto_exists|failed
+
+  #- name: init prezto
+  #  script: init-prezto.sh
+  #  sudo: no
+

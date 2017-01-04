@@ -1,0 +1,8 @@
+---
+- include: base.yml
+- include: yum.yml
+- include: git.yml
+- include: vim.yml
+- include: tmux.yml
+- include: zsh.yml
+

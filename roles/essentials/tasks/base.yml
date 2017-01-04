@@ -1,0 +1,26 @@
+---
+- name: (basics) set sysyconfig/i18n Japanese
+  raw: sed -i.org -e "s/LANG=\"C\"/LANG=\"ja_JP.UTF-8\"/" /etc/sysconfig/i18n
+- name: (basics) install package for SELinux module
+  yum: name=libselinux-python state=installed
+- name: (basics) set localtime
+  shell: cp -p /usr/share/zoneinfo/Japan /etc/localtime
+- name: (basics) disable SELinux
+  selinux: state=disabled
+- name: (basics) disable SELinux
+  shell: if [ "`/usr/sbin/getenforce`" = "Enforcing" ]; then /usr/sbin/setenforce 0; fi
+- name: (basics) install essential packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - gcc
+    - gcc-c++
+    - curl-devel
+    - expat-devel
+    - gettext-devel
+    - openssl-devel
+    - zlib-devel
+    - perl-ExtUtils-MakeMaker
+    - wget
+    - unzip
+    - bind-utils
+
