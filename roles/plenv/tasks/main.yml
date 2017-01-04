@@ -1,0 +1,8 @@
+---
+- name: install perl with plenv
+  script: install-plenv.sh
+  become: no
+- name: copy plenv.sh to /etc/profile.d/
+  copy: src=plenv.sh dest=/etc/profile.d/plenv.sh
+# 参考資料
+# http://shoheik.hatenablog.com/entry/2014/03/07/081951

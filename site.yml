@@ -8,6 +8,6 @@
     - mysql
     - rbenv
 #     - phpenv
-#     - plenv
+    - plenv
 #     - nodejs
 
