@@ -1,0 +1,15 @@
+---
+- name: Check if tj/n is cloned
+  shell: ls -la {{ N_HOME }}
+  register: n_is_cloned
+  ignore_errors: true
+  become: no
+
+- name: Clone tj/n
+  git: repo=https://github.com/tj/n.git dest={{ N_HOME }}
+  when: n_is_cloned|failed
+  become: no
+
+- name: Install node.js via n
+  shell: N_PREFIX={{ N_HOME }} {{ N_HOME }}/bin/n stable
+  become: no
