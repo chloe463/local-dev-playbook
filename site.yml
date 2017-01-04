@@ -2,8 +2,8 @@
 - hosts: local
   sudo: yes
   roles:
-     - essentials
-#     - httpd
+    - essentials
+    - httpd
 #     - redis
 #     - mysql
 #     - rbenv
