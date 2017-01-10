@@ -1,0 +1,9 @@
+---
+- name: composerをダウンロード
+  get_url: url=https://getcomposer.org/installer dest=/tmp/composer-installer
+- name: composerをインストール
+  shell: chdir=$HOME $HOME/.phpenv/shims/php /tmp/composer-installer
+  become: no
+- name: composerを設置
+  command: mv $HOME/composer.phar $HOME/bin/composer
+  become: no

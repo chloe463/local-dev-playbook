@@ -1,0 +1,125 @@
+---
+- name: install some packages to install phpenv
+  yum: name={{ item }} state=latest
+  with_items:
+    - libxml2-devel
+    - bison
+    - bison-devel
+    - openssl-devel
+    - curl-devel
+    - libjpeg-devel
+    - libpng-devel
+    - readline-devel
+    - libtidy-devel
+    - libxslt-devel
+    - enchant-devel
+    - libXpm
+    - libXpm-devel
+    - freetype-devel
+    - t1lib
+    - t1lib-devel
+    - gmp-devel
+    - libc-client-devel
+    - libicu-devel
+    - oniguruma-devel
+    - net-snmp
+    - net-snmp-devel
+    - bzip2-devel
+    - postgresql-devel
+
+- name: install some packages (from epel) to install phpenv
+  yum: name={{ item }} state=latest enablerepo=epel
+  with_items:
+    - re2c
+    - libmcrypt
+    - libmcrypt-devel
+
+- name: check if phpenv is cloned
+  command: ls {{ phpenv_root }}
+  register: phpenv_is_cloned
+  ignore_errors: true
+  become: no
+
+- name: clone CHH/phpenv
+  #  git: repo=https://github.com/CHH/phpenv.git dest={{ phpenv_root }}
+  git: repo=https://github.com/madumlao/phpenv dest={{ phpenv_root }}
+  when: phpenv_is_cloned|failed
+  become: no
+
+  #- name: set PHPENV_ROOT and exec php-install.sh
+  #  raw: "PHPENV_ROOT={{ phpenv_root }} {{ phpenv_root }}/bin/phpenv-install.sh"
+  #  when: phpenv_is_cloned|failed
+  #  become: no
+
+- name: extend PATH
+  copy: src=phpenv.sh dest=/etc/profile.d/phpenv.sh
+
+  #- name: check /root/.bashrc is edit
+  #  shell: grep PHPENV_ROOT /root/.bashrc
+  #  register: is_path_extended
+  #  ignore_errors: true
+
+  #- name: append phpenv.sh to /root/.bashrc
+  #  shell: cat /etc/profile.d/phpenv.sh >> /root/.bashrc
+  #  when: is_path_extended|failed
+
+  #- name: append phpenv.sh to /home/vagrant/.bashrc
+  #  shell: cat /etc/profile.d/phpenv.sh >> /home/vagrant/.bashrc
+  #  when: is_path_extended|failed
+
+- name: mkdir phpenv plugins directory
+  file: path={{ phpenv_root }}/plugins force=yes state=directory
+  become: no
+
+- name: install php-build as phpenv-plugins
+  git: repo=https://github.com/CHH/php-build.git dest={{ phpenv_root }}/plugins/php-build
+  when: phpenv_is_cloned|failed
+  become: no
+
+- name: copy default_configure_options
+  copy: src=default_configure_options dest={{ phpenv_root }}/plugins/php-build/share/php-build/default_configure_options
+  become: no
+
+- name: install phpenv-apache-version as phpenv-plugins
+  git: repo=https://github.com/garamon/phpenv-apache-version dest={{ phpenv_root }}/plugins/phpenv-apache-version
+  when: phpenv_is_cloned|failed
+  become: no
+
+  #- name: Change permission of http module directory
+  #  shell: chmod 777 /usr/lib64/httpd/modules
+
+- name: Change permission of http module directory
+  file:
+    path: /usr/lib64/httpd/modules
+    state: directory
+    mode: 0777
+
+  #- name: create symbolic link of phpenv (/usr/bin/phpenv --> /usr/local/phpenv/bin/phpenv)
+  #  file: src=/usr/local/phpenv/bin/phpenv dest=/usr/bin/phpenv state=link force=yes
+
+- name: check if {{php_version}} is installed
+  shell: "{{ phpenv_root }}/bin/phpenv versions | grep {{ php_version }}"
+  register: is_php_installed
+  ignore_errors: true
+  become: no
+
+- name: install php
+  command: "{{ phpenv_root }}/bin/phpenv install {{ php_version }}"
+  when: is_php_installed|failed
+  become: no
+
+  #- name: create symbolic link of php (/usr/bin/php -> /usr/local/phpenv/shims/php)
+  #  file: src=/usr/local/phpenv/shims/php dest=/usr/bin/php state=link force=yes
+
+- name: set php global version
+  command: "{{ phpenv_root }}/bin/phpenv global {{ php_version }}"
+  become: no
+
+  #- name: copy libphp5.so (/etc/httpd/modules/libphp5.so -> /usr/local/phpenv/versions/***/libphp5.so)
+  #  command: cp -p /etc/httpd/modules/libphp5.so /usr/local/phpenv/versions/{{ php_version }}/libphp5.so
+  # command: phpenv global {{ php_version }}
+# - name: mysql.sockの設定のためにmysql.iniの設置
+#   copy: src=mysql.ini dest=/usr/local/phpenv/versions/{{ php_version }}/etc/conf.d/mysql.ini
+- name: timezone.iniの設置
+  copy: src=timezone.ini dest={{ phpenv_root }}/versions/{{ php_version }}/etc/conf.d/timezone.ini
+  become: no

@@ -1,0 +1,3 @@
+---
+- include: phpenv.yml
+- include: composer.yml
