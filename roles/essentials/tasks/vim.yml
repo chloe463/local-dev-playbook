@@ -6,13 +6,22 @@
 
 - name: (vim) Clone vim repository
   git: repo=https://github.com/vim/vim.git dest=/usr/local/src/vim
+  when: vim_source_cloned|failed
+
+- name: (vim) Check if vim is installed
+  shell: vim --version
+  ignore_errors: True
+  register: vim_is_installed
 
 - name: (vim) confgure
   command: chdir=/usr/local/src/vim ./configure --prefix=/usr
+  when: vim_is_installed|failed
 
 - name: (vim) make
   command: chdir=/usr/local/src/vim make prefix=/usr all
+  when: vim_is_installed|failed
 
 - name: (vim) make install
   command: chdir=/usr/local/src/vim make prefix=/usr install
+  when: vim_is_installed|failed
 

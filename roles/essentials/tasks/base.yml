@@ -9,6 +9,12 @@
   selinux: state=disabled
 - name: (basics) disable SELinux
   shell: if [ "`/usr/sbin/getenforce`" = "Enforcing" ]; then /usr/sbin/setenforce 0; fi
+- name: (basics) Make bin directory
+  file:
+    path: $HOME/bin
+    state: directory
+    mode: 0755
+  become: no
 - name: (basics) install essential packages
   yum: name={{ item }} state=latest
   with_items:

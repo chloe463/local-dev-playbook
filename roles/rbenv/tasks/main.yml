@@ -16,7 +16,7 @@
   become: no
 
 - name: Install ruby-build
-  shell: chdir={{ RBENV_ROOT }}/plugins/ruby-build ./install.sh
+  shell: chdir={{ RBENV_ROOT }}/plugins/ruby-build PREFIX=$HOME/.rbenv ./install.sh
   when: rbenv_is_cloned|failed
   become: no
 
@@ -28,7 +28,6 @@
 
 - name: Copy rbenv.sh to /etc/profile.d/rbenv.sh
   copy: src=rbenv.sh dest=/etc/profile.d/rbenv.sh
-  become: no
 
   # - name: Set PATH
   #   shell: cat /etc/profile.d/rbenv.sh >> /root/.bashrc

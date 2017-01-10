@@ -56,8 +56,9 @@
 
 - name: (tmux) make
   command: chdir=/usr/local/src/tmux-{{tmux_version}} make prefix=/usr all
-  when: tmux_is_installed
+  when: tmux_is_installed|failed
 
 - name: (tmux) make install
   command: chdir=/usr/local/src/tmux-{{tmux_version}} make prefix=/usr install
+  when: tmux_is_installed|failed
 

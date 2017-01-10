@@ -20,16 +20,30 @@
 
 - name: (zsh) make
   command: chdir=/usr/local/src/zsh-{{zsh_version}} make prefix=/usr all
-  when: zsh_is_installed
+  when: zsh_is_installed|failed
 
 - name: (zsh) make install
   command: chdir=/usr/local/src/zsh-{{zsh_version}} make prefix=/usr install
+  when: zsh_is_installed|failed
+
+- name: (zsh) Check if zsh path is on /etc/shells
+  shell: grep '/usr/bin/zsh' /etc/shells
+  ignore_errors: True
+  register: zsh_path_is_on_etc_shell
 
 - name: (zsh) Append zsh path to /etc/shells
   shell: echo '/usr/bin/zsh' >> /etc/shells
-  when: zsh_is_installed
+  when: zsh_path_is_on_etc_shell|failed
 
-#TODO: install prezto
+- name: (zsh) Check if startups are copied
+  shell: ls /etc/zsh*
+  ignore_errors: True
+  register: zsh_startup_exists
+
+- name: (Zsh) Copy zsh startup files
+  shell: cp /usr/local/src/zsh-{{zsh_version}}/StartupFiles/zsh* /etc/
+  when: zsh_startup_exists|failed
+
 - name: (prezto) Check if .prezto is cloned
   shell: ls -la $HOME/.zprezto
   sudo: no
@@ -41,7 +55,19 @@
   sudo: no
   when: prezto_exists|failed
 
-  #- name: init prezto
-  #  script: init-prezto.sh
-  #  sudo: no
+- name: init prezto
+  script: init-prezto.sh
+  ignore_errors: True
+  become: no
+
+- name: (zsh) Check if my_path is copied
+  shell: ls -a $HOME/.my_path
+  ignore_errors: True
+  register: my_path_exists
+  become: no
+
+- name: (zsh) Copy my_path
+  copy: src=my_path dest=$HOME/.my_path
+  when: my_path_exists|failed
+  become: no
 

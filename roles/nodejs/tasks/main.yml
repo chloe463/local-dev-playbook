@@ -13,3 +13,7 @@
 - name: Install node.js via n
   shell: N_PREFIX={{ N_HOME }} {{ N_HOME }}/bin/n stable
   become: no
+
+- name: Copy n.sh to /etc/profile.d/n.sh
+  copy: src=n.sh dest=/etc/profile.d/n.sh
+
