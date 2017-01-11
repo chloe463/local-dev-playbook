@@ -12,7 +12,7 @@
   command: which git
   ignore_errors: True
   register: git_is_installed
-  sudo: no
+  become: no
 
 - name: (git) configure
   command: chdir=/usr/local/src/git-{{git_version}} ./configure --prefix=/usr

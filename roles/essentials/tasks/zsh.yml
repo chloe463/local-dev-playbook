@@ -12,7 +12,7 @@
   command: which zsh
   ignore_errors: True
   register: zsh_is_installed
-  sudo: no
+  become: no
 
 - name: (zsh) configure
   command: chdir=/usr/local/src/zsh-{{zsh_version}} ./configure --prefix=/usr
@@ -46,13 +46,13 @@
 
 - name: (prezto) Check if .prezto is cloned
   shell: ls -la $HOME/.zprezto
-  sudo: no
+  become: no
   ignore_errors: True
   register: prezto_exists
 
 - name: (prezto) install prezto
   shell: /usr/bin/git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
-  sudo: no
+  become: no
   when: prezto_exists|failed
 
 - name: init prezto

@@ -48,7 +48,7 @@
   command: which tmux
   ignore_errors: True
   register: tmux_is_installed
-  sudo: no
+  become: no
 
 - name: (tmux) configure
   command: chdir=/usr/local/src/tmux-{{tmux_version}} ./configure --prefix=/usr
