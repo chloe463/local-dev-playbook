@@ -6,6 +6,7 @@
     - httpd
     - redis
     - mysql
+    - mongodb
     - rbenv
     - phpenv
     - plenv

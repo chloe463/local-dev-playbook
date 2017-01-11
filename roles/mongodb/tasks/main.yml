@@ -1,0 +1,13 @@
+---
+- name: Check if mongodb yum repository is added
+  shell: ls /etc/yum.repos.d/mongodb-org-2.6.repo
+  ignore_errors: True
+  register: mongodb_yum_exsists
+
+- name: Copy mongodb-org-2.6.repo
+  copy: src=mongodb-org-2.6.repo dest=/etc/yum.repos.d/mongodb-org-2.6.repo
+  when: mongodb_yum_exsists|failed
+
+- name: Install mongodb
+  yum: name=mongodb-org state=present enablerepo=mongodb-org-2.6
+  notify: start mongodb
