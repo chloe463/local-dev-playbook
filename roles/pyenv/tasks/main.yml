@@ -1,0 +1,6 @@
+---
+- name: Install pyenv
+  script: install-pyenv.sh
+  become: no
+- name: Copy pyenv.sh to /etc/profile.d/
+  copy: src=pyenv.sh dest=/etc/profile.d/pyenv.sh

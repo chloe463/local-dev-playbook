@@ -1,7 +1,9 @@
 MY_PATH=$HOME/bin
 MY_PATH=$MY_PATH:$HOME/.phpenv/bin:$HOME/.phpenv/shims
+MY_PATH=$MY_PATH:$HOME/.composer/vendor/bin
 MY_PATH=$MY_PATH:$HOME/.plenv/bin:$HOME/.plenv/shims
 MY_PATH=$MY_PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims
+MY_PATH=$MY_PATH:$HOME/.pyenv/bin:$HOME/.pyenv/shims
 MY_PATH=$MY_PATH:$HOME/.n/bin
 
 export PATH=$PATH:$MY_PATH
