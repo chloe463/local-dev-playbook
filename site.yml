@@ -12,4 +12,5 @@
     - plenv
     - pyenv
     - nodejs
+    - go
 

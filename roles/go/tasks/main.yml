@@ -1,0 +1,15 @@
+---
+- name: Check if goenv is cloned
+  command: ls -la $HOME/.goenv
+  ignore_errors: True
+  register: goenv_source_cloned
+  become: no
+
+- name: Install goenv
+  git: repo=https://github.com/syndbg/goenv.git dest=$HOME/.goenv
+  when: goenv_source_cloned|failed
+  become: no
+
+- name: Copy goenv.sh to /etc/profile.d
+  copy: src=goenv.sh dest=/etc/profile.d/goenv.sh
+  when: goenv_source_cloned|failed
