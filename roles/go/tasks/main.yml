@@ -13,3 +13,19 @@
 - name: Copy goenv.sh to /etc/profile.d
   copy: src=goenv.sh dest=/etc/profile.d/goenv.sh
   when: goenv_source_cloned|failed
+
+- name: Install go via goenv
+  shell: $HOME/.goenv/bin/goenv install {{GO_VERSION}}
+  when: goenv_source_cloned|failed
+  register: go_is_installed
+  become: no
+
+- name: Set go global version
+  shell: $HOME/.goenv/bin/goenv global {{GO_VERSION}}
+  when: go_is_installed|succeeded
+  become: no
+
+- name: Install dep
+  shell: $HOME/.goenv/shims/go get -u github.com/golang/dep/cmd/dep
+  when: goenv_source_cloned|failed
+  become: no

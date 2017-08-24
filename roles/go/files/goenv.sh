@@ -1,4 +1,5 @@
 export GOENV_ROOT="${HOME}/.goenv"
-export PATH="$GOENV_ROOT/bin:$PATH"
+export GOPATH="${HOME}/.go"
+export PATH="$GOENV_ROOT/bin:$GOPATH/bin:$PATH"
 eval "$(goenv init -)"
 
