@@ -5,6 +5,7 @@ MY_PATH=$MY_PATH:$HOME/.plenv/bin:$HOME/.plenv/shims
 MY_PATH=$MY_PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims
 MY_PATH=$MY_PATH:$HOME/.pyenv/bin:$HOME/.pyenv/shims
 MY_PATH=$MY_PATH:$HOME/.goenv/bin:$HOME/.goenv/shims
+MY_PATH=$MY_PATH:$HOME/.go/bin
 MY_PATH=$MY_PATH:$HOME/.n/bin
 
 export PATH=$PATH:$MY_PATH
